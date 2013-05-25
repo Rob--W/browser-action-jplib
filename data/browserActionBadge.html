@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Browser action button</title>
+<style>
+* {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html, body, button {
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+button {
+    -moz-appearance: toolbarbutton;
+    position: relative;
+}
+button::-moz-focus-inner {
+    border: 0;
+}
+#button-img {
+    width: 19px;
+    height: 19px;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+#badgeText {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    font: 8px Sans-Serif;
+    color: #FFFFFF;
+    background-color: #C00000;
+    border: 1px solid #800000;
+}
+</style>
+</head>
+<body>
+<button>
+    <img id="button-img" src="active.png">
+    <span id="badgeText" hidden="true"></span>
+</button>
+</body>
+</html>

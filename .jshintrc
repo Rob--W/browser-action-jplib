@@ -1,0 +1,10 @@
+{
+    "globalstrict": true,
+    "moz": true,
+    "newcap": false,
+    "devel": true,
+    "globals": {
+        "exports": false,
+        "require": false
+    }
+}
