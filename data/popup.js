@@ -26,26 +26,15 @@ if (document.readyState == 'complete') {
     });
 }
 
-// location.origin supported in Firefox 21+
-if (!('origin' in location)) location.origin = location.protocol + '//' + location.host;
+const CLOSE_TOKEN = 'window.close.' + Math.random();
 
-const CLOSE_TOKEN = Math.random();
-
-document.defaultView.addEventListener('message', function(event) {
-    if (event.origin && event.origin === location.origin) {
-        if (event.data === CLOSE_TOKEN) {
-            self.port.emit('hide');
-        } else {
-            self.postMessage(event.data);
-        }
-    } else {
-        console.error('Unknown message origin: ' + event.origin);
-    }
+document.addEventListener(CLOSE_TOKEN, function() {
+    self.port.emit('hide');
 });
 
 // When window.close() is called, hide the popup.
 document.documentElement.setAttribute('onreset',
         'document.documentElement.removeAttribute("onreset");' +
-        'window.close=function(){postMessage(' + CLOSE_TOKEN + ',"*")};'
+        'window.close=function(){document.dispatchEvent(new CustomEvent("' + CLOSE_TOKEN + '"));};'
 );
 document.documentElement.onreset();
