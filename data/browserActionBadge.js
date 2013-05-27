@@ -10,7 +10,7 @@
 var badgeText = document.getElementById('badgeText');
 self.port.on('setBadgeText', function(text) {
     badgeText.textContent = text;
-    badgeText.hidden = !text;
+    badgeText.style.display = text ? '' : 'none';
 });
 self.port.on('setBadgeBackgroundColor', function(colorArray) {
     // Default color when every digit is 0

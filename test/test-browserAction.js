@@ -153,7 +153,8 @@ exports['test setPopup / getPopup'] = function(assert, done) {
 
 exports['test setBadgeText / getBadgeText'] = function(assert, done) {
     let badge = BrowserAction({});
-    function getBadgeText() getBadgeDocument().querySelector('#badgeText').textContent
+    function getBadgeTextElem() getBadgeDocument().querySelector('#badgeText')
+    function getBadgeText() getBadgeTextElem().textContent
     CALL(badge, 'getBadgeText', [{}, TYPE_CALLBACK])
     .then(function(args) {
         assert.equal(args.length, 1, 'Callback called with one argument');
@@ -161,6 +162,7 @@ exports['test setBadgeText / getBadgeText'] = function(assert, done) {
     })
     .then(promiseBadgeReady)
     .then(function() assert.equal(getBadgeText(), '', 'Badge text empty string by default'))
+    .then(function() assert.equal(getBadgeTextElem().offsetWidth, 0, 'Badge element should be invisible'))
     .then(function() CALL(badge, 'setBadgeText', [{text: 'foo'}]))
     .then(function() CALL(badge, 'getBadgeText', [{}, TYPE_CALLBACK]))
     .then(function(args) {
@@ -169,6 +171,7 @@ exports['test setBadgeText / getBadgeText'] = function(assert, done) {
     })
     .delay()
     .then(function() assert.equal(getBadgeText(), 'foo', 'Badge text updated'))
+    .then(function() assert.notEqual(getBadgeTextElem().offsetWidth, 0, 'Badge element should be visible'))
     .then(function() CALL(badge, 'setBadgeText', [{text: ''}]))
     .then(function() CALL(badge, 'getBadgeText', [{}, TYPE_CALLBACK]))
     .then(function(args) {
@@ -177,6 +180,7 @@ exports['test setBadgeText / getBadgeText'] = function(assert, done) {
     })
     .delay()
     .then(function() assert.equal(getBadgeText(), '', 'Badge text updated to empty string'))
+    .then(function() assert.equal(getBadgeTextElem().offsetWidth, 0, 'Badge element should be invisible'))
     .then(function() CALL(badge, 'setBadgeText', [{text: '&amp;'}]))
     .then(function() CALL(badge, 'getBadgeText', [{}, TYPE_CALLBACK]))
     .then(function(args) {
