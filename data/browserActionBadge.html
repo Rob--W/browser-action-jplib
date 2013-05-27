@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--
+  (c) 2013 Rob Wu <gwnRob@gmail.com>
+  Implementation of chrome.browserAction for Jetpack Add-ons.
+  Distributed under the MIT license.
+-->
 <html>
 <head>
 <meta charset="utf-8">
@@ -10,6 +15,7 @@
 }
 html, body, button {
     display: block;
+    position: relative;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -32,21 +38,51 @@ button::-moz-focus-inner {
     right: 0;
     bottom: 0;
 }
+/**
+ * Styles created using my eyes and a peek into badge_util.cc
+ */
 #badgeText {
     position: absolute;
+    display: inline-block;
+    vertical-align: middle;
     bottom: 0px;
     right: 0px;
-    font: 8px Sans-Serif;
-    color: #FFFFFF;
-    background-color: #C00000;
-    border: 1px solid #800000;
+    height: 12px;
+    max-width: 100%;
+
+    padding: 0 1px;
+    pointer-events: none;
+
+    overflow: hidden;
+    white-space: pre;
+    font-size: 9.5px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #FFF;
+
+    background-image: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.624) 0,
+        rgba(  0,   0,   0, 0    ) 10%,
+        rgba(  0,   0,   0, 0.255) 90%,
+        rgba(  0,   0,   0, 0.377) 100%
+    );
+    background-clip: padding-box;
+    border-radius: 2px;
+    border-style: solid;
+    border-width: 1px;
+
+    /* overridden by script */
+    background-color: #E00000;
+    border-color:     #E00000;
+
 }
 </style>
 </head>
 <body>
 <button>
-    <img id="button-img" src="active.png">
-    <span id="badgeText" hidden="true"></span>
+    <img id="button-img" src="default_icon.png">
 </button>
+<span id="badgeText" hidden="true"></span>
 </body>
 </html>
