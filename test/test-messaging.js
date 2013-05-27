@@ -41,7 +41,7 @@ exports['test onMessage / sendMessage with workers'] = function(assert, done) {
         include: 'data:text/html*',
         contentScriptWhen: 'start',
         contentScriptFile: [messageContentScriptFile],
-        contentScriptOptions: {channelName: 'test-messaging', includeDataURI: true},
+        contentScriptOptions: {channelName: 'test-messaging'},
         onAttach: function(worker) {
             let extension = createMessageChannel(pageMod.contentScriptOptions, worker.port);
             let testPhase = 1;
