@@ -281,5 +281,45 @@ exports['test onClicked / enable / disable'] = function(assert, done) {
     .then(done);
 };
 
+exports['test popup and onMessage / sendMessage'] = function(assert, done) {
+    // TODO: Test whether the document has really changed.
+    let default_popup = selfData.url('popup.html');
+    let new_popup = data.url('popup.html?test');
+    let badge = BrowserAction({
+        default_popup: 'data:text/html,' + encodeURIComponent(
+                           '<script>extension.onMessage.addListener(' +
+                           'function(message,sender,sendResponse){' +
+                           'if(message!="Hey") throw new Error("Unexpected message " + message);' +
+                           'sendResponse(123);return true;});extension.sendMessage("init");</script>'  +
+                           'popup message passing test'
+                        )
+    });
+    let receivedMessage = false;
+    badge.onMessage.addListener(function(message) {
+        assert.equal(message, "init", 'Should receive correct message from popup!');
+        receivedMessage = true;
+    });
+    promiseBadgeReady()
+    .then(function() {
+        let doc = getBadgeDocument();
+        let MouseEvent = doc.defaultView.MouseEvent;
+        let event = new MouseEvent('click', {button: 0});
+        doc.body.dispatchEvent(event);
+    })
+    .delay(1000)
+    .then(function() assert.ok(receivedMessage, 'Received initial message from popup!'))
+    .then(function() {
+        let deferred = defer();
+        badge.sendMessage('Hey', function(message) {
+            assert.equal(message, 123, 'Should receive correct message from popup!');
+            deferred.resolve();
+        });
+        setTimeout(deferred.reject, 2000, 'Did not receive reply from popup!');
+        return deferred.promise;
+    })
+    .logAnyErrors()
+    .then(badge.destroy)
+    .then(done);
+};
 
 require('sdk/test').run(exports);

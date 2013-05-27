@@ -23,7 +23,7 @@ self.port.on('setBadgeBackgroundColor', function(colorArray) {
     badgeText.style.backgroundColor = rgba();
 
     // Darken the color
-    for (let i=0; i<3; ++i) colorArray[i] = colorArray[i] * 0.95;
+    for (let i=0; i<3; ++i) colorArray[i] = Math.round(colorArray[i] * 0.95);
     badgeText.style.borderColor = rgba();
 });
 self.port.on('setIcon', function(url) {
