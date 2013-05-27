@@ -10,7 +10,7 @@ Chrome extension's manifest file to your add-ons background page. After running 
 browser action button will appear at the right of the location bar.
 
 ```javascript
-var badge = require('browser-action').BrowserAction({
+var badge = require('browserAction').BrowserAction({
     default_icon: 'images/icon19.png', // optional
     default_title: 'Badge title',      // optional; shown in tooltip
     default_popup: 'popup.html'        // optional

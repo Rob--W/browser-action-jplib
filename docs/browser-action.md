@@ -13,7 +13,7 @@ There are only a few differences between this Jetpack module and the `chrome.bro
 
 ## Example
 
-    var badge = require('browser-action').BrowserAction({
+    var badge = require('browserAction').BrowserAction({
         default_icon: 'images/icon19.png', // optional
         default_title: 'Badge title',      // optional; shown in tooltip
         default_popup: 'popup.html'        // optional
@@ -21,7 +21,7 @@ There are only a few differences between this Jetpack module and the `chrome.bro
 
 ## Example: Change badge text on click.
 
-    var badge = require('browser-action').BrowserAction({
+    var badge = require('browserAction').BrowserAction({
         default_icon: 'images/icon19.png', // optional
         default_title: 'Badge title'       // optional; shown in tooltip
     });
