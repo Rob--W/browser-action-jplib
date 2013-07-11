@@ -17,9 +17,13 @@ On the background page, use [page-mod](modules/sdk/page-mod.html) to attach the 
     var pagemod = PageMod({
         include: data.url('*'),
         contentScriptWhen: 'start',
-        contentScriptFile: messageContentScriptFile,
+        // Always put the messaging module at the start of the contentScriptFile array!
+        contentScriptFile: [messageContentScriptFile],
         contentScriptOptions: {
-            channelName: 'whatever you want'
+            channelName: 'whatever you want',
+            // Set the following to false if you want to communicate between
+            // the "extension" and a content script instead of the page.
+            endAtPage: true
         },
         onAttach: function(worker) {
             var extension = createMessageChannel(pagemod.contentScriptOptions, worker.port);
@@ -35,7 +39,8 @@ Make sure that all `contentScript` options are defined as shown above. You can p
 channel between the content script and the main page, call `createMessageChannel` as shown above.
 
 After doing this, you'll be able to easily communicate with your background page through a new
-global `extension` object:
+global `extension` object. If the `endAtPage` parameter is set to `false`, then the following
+code (minus `<script>`-tags) can be run in the content script, but not in the page.
 
     <script>
     extension.sendMessage({
@@ -50,6 +55,10 @@ global `extension` object:
   @param options {Object}
     @prop channelName {String}
       Unique name for the channel. Used to by the main and content script to connect the channels.
+    @prop endAtPage {Boolean}
+      *optional*, defaults to `true`.
+      Whether the channel ends at the page. If false, the channel will end at the content script.
+      At the end of the channel, the global `extension` variable is declared.
   @param port {Port}
     An event emitter shared by the main script and the content script.
     Used to transport messages.
@@ -66,6 +75,8 @@ global `extension` object:
   A global object, `window.extension` is defined on the **page** when a channel has been set up.
   If the content script is inserted using `contentScriptWhen: "start"`, you can be assured that
   the object is defined.
+  If the `endAtPage` parameter is set to `false`, then it is **not** defined on the page, but
+  in the **content script**.
 
 <api name="sendMessage">
 @method

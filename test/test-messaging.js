@@ -10,7 +10,14 @@ const selfData = require('self-data');
 function $(selector) windowUtils.getMostRecentBrowserWindow().document.querySelector(selector)
 function $$(selector) windowUtils.getMostRecentBrowserWindow().document.querySelectorAll(selector)
 
-exports['test onMessage / sendMessage with workers'] = function(assert, done) {
+/**
+ * Create test.
+ * If endAtPage is true, the channel-testing code is run in the context of the page,
+ *   and it's checked whether "extension" is undefined in the content script.
+ * If endAtPage is false, the channel-testing code is run in the context of the content script.
+ *   and it's checked whether "extension" is undefined in the page.
+ **/
+function testFactory(isEndAtPage, assert, done) {
     assert.notEqual(messageContentScriptFile, undefined, 'Content script file path must be exported!');
 
     let code = '(' + function pageMain() {
@@ -32,7 +39,9 @@ exports['test onMessage / sendMessage with workers'] = function(assert, done) {
             }
         });
     } + ')();';
-    let html = '<!DOCTYPE><html><head><title></title></head><body><script>' + code + '</script></body></html>';
+    let throwIfExtensionIsDefined = 'if(typeof extension == "object") throw new Error("Unexpected global object \'extension\'!")';
+    let pageCode = isEndAtPage ? code : throwIfExtensionIsDefined;
+    let html = '<!DOCTYPE><html><head><title></title></head><body><script>' + pageCode + '</script></body></html>';
     let data_url = 'data:text/html,' + encodeURIComponent(html);
     let setDelayedException = function(i) setTimeout(function() {
         throw new Error('onMessage not triggered (' + i +')!');
@@ -41,7 +50,8 @@ exports['test onMessage / sendMessage with workers'] = function(assert, done) {
         include: 'data:text/html*',
         contentScriptWhen: 'start',
         contentScriptFile: [messageContentScriptFile],
-        contentScriptOptions: {channelName: 'test-messaging'},
+        contentScript: isEndAtPage ? throwIfExtensionIsDefined : code,
+        contentScriptOptions: {channelName: 'test-messaging', endAtPage: isEndAtPage},
         onAttach: function(worker) {
             let extension = createMessageChannel(pageMod.contentScriptOptions, worker.port);
             let testPhase = 1;
@@ -100,6 +110,8 @@ exports['test onMessage / sendMessage with workers'] = function(assert, done) {
         }
     });
     tabs.activeTab.url = data_url;
-};
+}
+exports['test onMessage / sendMessage with workers with end at page'] = testFactory.bind(exports, /*endAtPage=*/true);
+exports['test onMessage / sendMessage with workers with end at content script'] = testFactory.bind(exports, /*endAtPage=*/false);
 
 require('sdk/test').run(exports);
