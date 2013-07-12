@@ -19,7 +19,7 @@ defer = defer.bind(null, {
 const windowUtils = require('sdk/window/utils');
 const { setTimeout } = require('sdk/timers');
 const { data, name } = require('sdk/self');
-const selfData = require('self-data');
+const selfData = require('browser-action-jplib-data');
 
 function $(selector) windowUtils.getMostRecentBrowserWindow().document.querySelector(selector)
 function $$(selector) windowUtils.getMostRecentBrowserWindow().document.querySelectorAll(selector)

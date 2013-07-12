@@ -5,7 +5,6 @@ const windowUtils = require('sdk/window/utils');
 const tabs = require('sdk/tabs');
 const { PageMod } = require("sdk/page-mod");
 const { clearTimeout, setTimeout } = require('sdk/timers');
-const selfData = require('self-data');
 
 function $(selector) windowUtils.getMostRecentBrowserWindow().document.querySelector(selector)
 function $$(selector) windowUtils.getMostRecentBrowserWindow().document.querySelectorAll(selector)
