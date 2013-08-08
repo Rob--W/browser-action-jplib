@@ -2,8 +2,8 @@
     "name": "browser-action",
     "description": "Create a browser action badge using the chrome.browserAction API syntax.",
     "keywords": ["browser-action", "badge", "toolbarwidget", "widget", "ui"],
-    "author": "Rob Wu (https://rob.lekensteyn.nl/) <gwnRob@gmail.com>",
+    "author": "Rob Wu (https://robwu.nl/) <gwnRob@gmail.com>",
     "dependencies": ["toolbarwidget"],
-    "version": "0.1.4",
+    "version": "0.1.5",
     "license": "MIT"
 }

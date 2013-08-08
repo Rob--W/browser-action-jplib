@@ -40,13 +40,13 @@ function testFactory(isEndAtPage, assert, done) {
     } + ')();';
     let throwIfExtensionIsDefined = 'if(typeof extension == "object") throw new Error("Unexpected global object \'extension\'!")';
     let pageCode = isEndAtPage ? code : throwIfExtensionIsDefined;
-    let html = '<!DOCTYPE><html><head><title></title></head><body><script>' + pageCode + '</script></body></html>';
+    let html = '<!--messagingtest--><!DOCTYPE><html><head><title></title></head><body><script>' + pageCode + '</script></body></html>';
     let data_url = 'data:text/html,' + encodeURIComponent(html);
     let setDelayedException = function(i) setTimeout(function() {
         throw new Error('onMessage not triggered (' + i +')!');
     }, 2000);
     let pageMod = PageMod({
-        include: 'data:text/html*',
+        include: 'data:text/html,%3C!--messagingtest*',
         contentScriptWhen: 'start',
         contentScriptFile: [messageContentScriptFile],
         contentScript: isEndAtPage ? throwIfExtensionIsDefined : code,

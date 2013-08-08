@@ -246,7 +246,7 @@ exports['test onClicked / enable / disable'] = function(assert, done) {
     let badge = BrowserAction({});
     const WAIT_TIMEOUT = 150;
     let onClicked;
-    badge.onClicked.addListener(function() onClicked());
+    badge.onClicked.addListener(function(tab) onClicked(tab));
     let simulateClick = function() {
         let doc = getBadgeDocument();
         let MouseEvent =  doc.defaultView.MouseEvent;

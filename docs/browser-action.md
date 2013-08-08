@@ -3,8 +3,7 @@ The `browserAction` module is modelled after the [`chrome.browserAction`](https:
 There are only a few differences between this Jetpack module and the `chrome.browserAction` API:
 
 1. Tab-specific behavior cannot be defined, because the chrome.tabs API is not emulated in Firefox.
-   Consequently, all `tabId` parameters are ignored, and the `browserAction.onClicked` is triggered
-   without any parameters.
+   Consequently, all `tabId` parameters are ignored.
 2. The `setIcon` method does not support the `imageData` parameter.
 3. A new method, `destroy` has been added to remove the badge.
 4. `browserAction.sendMessage` and `browserAction.onMessage` are added. These are similar to
@@ -26,7 +25,7 @@ There are only a few differences between this Jetpack module and the `chrome.bro
         default_title: 'Badge title'       // optional; shown in tooltip
     });
     // Set badge text to x on click
-    badge.onClicked.addListener(function() {
+    badge.onClicked.addListener(function(tab) {
         badge.setBadgeText({
             text: 'x'
         });
@@ -213,6 +212,8 @@ Creates a new badge. The badge is immediately added to the toolbar.
 <api name="onClicked">
 @event
   Fired when a browser action icon is clicked. This event will not fire if the browser action has a popup.
+@argument {tabs.Tab}
+  Object with details about the tab associated with the click. The object follows Chrome's [`tabs.Tab`](https://developer.chrome.com/extensions/tabs.html#type-Tab) format.
 </api>
 
 </api>
