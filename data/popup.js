@@ -32,7 +32,7 @@ var rootObserver = new MutationObserver(function() {
         // Last check was over 0.2 seconds ago. Check immediately.
         updatePanelDimensions();
     } else {
-        deferredDimensionCheck = setTimeout(updatePanelDimensions, 50);
+        deferredDimensionCheck = setTimeout(updatePanelDimensions, 10);
     }
     lastChecked = now;
 });
@@ -55,6 +55,9 @@ const CLOSE_TOKEN = 'window.close.' + Math.random();
 
 document.addEventListener(CLOSE_TOKEN, function() {
     self.port.emit('hide');
+});
+self.on('detach', function() {
+    window.dispatchEvent(new CustomEvent('unload'));
 });
 
 // When window.close() is called, hide the popup.
