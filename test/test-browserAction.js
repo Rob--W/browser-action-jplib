@@ -30,6 +30,12 @@ function widgetCount() container() ? container().getElementsByTagName('toolbarit
 function getBadgeElem() $('toolbaritem[id*="browserAction"][label="' + name + '"]')
 function getBadgeDocument() getBadgeElem().querySelector('iframe').contentDocument
 function promiseBadgeReady() promiseDOMReady(getBadgeElem().querySelector('iframe'))
+function clickBadge() {
+    // NOTE: Clicking the badge while the panel is visible does not hide the panel!
+    let doc = getBadgeDocument();
+    let MouseEvent = doc.defaultView.MouseEvent;
+    doc.body.dispatchEvent(new MouseEvent('click', {button: 0}));
+}
 
 function promiseDOMReady(iframe) {
     let deferred = defer();
@@ -247,23 +253,18 @@ exports['test onClicked / enable / disable'] = function(assert, done) {
     const WAIT_TIMEOUT = 150;
     let onClicked;
     badge.onClicked.addListener(function(tab) onClicked(tab));
-    let simulateClick = function() {
-        let doc = getBadgeDocument();
-        let MouseEvent =  doc.defaultView.MouseEvent;
-        doc.body.dispatchEvent(new MouseEvent('click', {button: 0}));
-    };
     let expectNoClick = function(i) function() {
         let deferred = defer();
         setTimeout(deferred.resolve, WAIT_TIMEOUT);
         onClicked = function() deferred.reject('onClicked should not be triggered (' + i + ')');
-        simulateClick();
+        clickBadge();
         return deferred.promise.then(function() assert.pass('onClicked was not triggered (' + i + ')'));
     };
     let expectClick = function(i) function() {
         let deferred = defer();
         setTimeout(deferred.reject, WAIT_TIMEOUT, 'onClicked should have been triggered (' + i + ')');
         onClicked = deferred.resolve;
-        simulateClick();
+        clickBadge();
         return deferred.promise.then(function() assert.pass('onClicked was triggered (' + i + ')'));
     };
 
@@ -296,16 +297,11 @@ exports['test popup and onMessage / sendMessage'] = function(assert, done) {
     });
     let receivedMessage = false;
     badge.onMessage.addListener(function(message) {
-        assert.equal(message, "init", 'Should receive correct message from popup!');
+        assert.equal(message, 'init', 'Should receive correct message from popup!');
         receivedMessage = true;
     });
     promiseBadgeReady()
-    .then(function() {
-        let doc = getBadgeDocument();
-        let MouseEvent = doc.defaultView.MouseEvent;
-        let event = new MouseEvent('click', {button: 0});
-        doc.body.dispatchEvent(event);
-    })
+    .then(clickBadge)
     .delay(1000)
     .then(function() assert.ok(receivedMessage, 'Received initial message from popup!'))
     .then(function() {
@@ -319,6 +315,103 @@ exports['test popup and onMessage / sendMessage'] = function(assert, done) {
     })
     .logAnyErrors()
     .then(badge.destroy)
+    .then(done);
+};
+
+exports['test popup show and hide'] = function(assert, done) {
+    let popupPath = 'data:text/html,' + encodeURIComponent(
+                       '<body><script>var id=Math.random();' +
+                       'extension.onMessage.addListener(function(message,sender,sendResponse){' +
+                       '    sendResponse(id);' +
+                       '});extension.sendMessage("init");' +
+                       'document.body.textContent = id;</script></body>'
+                    );
+    let getXulPanel = function() {
+        let iframe = $('iframe[src="' + popupPath + '"]');
+        return iframe && iframe.parentNode;
+    };
+    let getXulPanels = function() $$('#mainPopupSet > panel');
+    let initialPanels = getXulPanels();
+    let initialPanelCount = initialPanels.length;
+
+    let badge = BrowserAction({
+        default_popup: popupPath
+    });
+
+    let channelId;
+    promiseBadgeReady()
+    .then(clickBadge) // Show
+    .delay(1000)
+    .then(function() {
+        assert.equal(getXulPanels().length, initialPanelCount + 1, 'Panel should be inserted after clicking button.');
+        assert.equal(getXulPanel().state, 'open', 'Panel should be visible');
+    })
+    .then(function() {
+        let deferred = defer();
+        badge.sendMessage('Hey', function(message) {
+            channelId = message;
+            let currentChannelId = $('iframe[src="' + popupPath + '"]').contentDocument.body.textContent;
+            assert.equal(currentChannelId, channelId, 'Expected that the received message equals the sent message.');
+
+            deferred.resolve();
+        });
+        setTimeout(deferred.reject, 2000, 'Did not receive reply from popup!');
+        return deferred.promise;
+    })
+    .then(function() {
+        getXulPanel().hidePopup();
+    })
+    .then(function() {
+        assert.equal(getXulPanel(), null, 'Panel should be removed');
+    })
+    .then(function() {
+        let deferred = defer();
+        let hasRun = false;
+        badge.onMessage.addListener(function(message) {
+            if (hasRun) return;
+            hasRun = true;
+            assert.equal(message, 'init', 'Received "init" message from popup!');
+            deferred.resolve();
+        });
+        setTimeout(deferred.reject, 2000, 'Expected popup to reload after hiding + showing popup!');
+        clickBadge(); // Show
+        return deferred.promise;
+    })
+    .then(function() {
+        let currentChannelId = $('iframe[src="' + popupPath + '"]').contentDocument.body.textContent;
+        assert.notEqual(currentChannelId, channelId, 'Expected that the page has reload.');
+    })
+    .then(function() {
+        let deferred = defer();
+        badge.sendMessage('Hey', function(message) {
+            assert.notEqual(message, channelId, 'Expected different reply due to page load');
+            deferred.resolve();
+        });
+        setTimeout(deferred.reject, 2000, 'Did not receive reply from popup!');
+        return deferred.promise;
+    })
+    .logAnyErrors()
+    .then(badge.destroy)
+    .then(function() {
+        var xulPanels = getXulPanels();
+        var newPanelCount = xulPanels.length;
+        if (newPanelCount !== initialPanelCount) {
+            console.log('\n\n');
+            initialPanels = [].slice.call(initialPanels);
+            for (var i = 0; i < xulPanels.length; ++i) {
+                let panel = xulPanels[i];
+                if (panel === 0) {
+                    newPanelCount--;
+                    continue;
+                }
+                if (initialPanels.indexOf(panel) === -1) {
+                    console.error('Extra panel: ' + require('./serializeToString')(xulPanels[i]) + '\n');
+                }
+            }
+        }
+        assert.equal(newPanelCount, initialPanelCount, 'Panel should be gone after destroying badge.');
+    })
+    .logAnyErrors()
     .then(done);
 };
 
