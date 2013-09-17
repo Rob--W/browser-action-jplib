@@ -4,6 +4,6 @@
     "keywords": ["browser-action", "badge", "toolbarwidget", "widget", "ui"],
     "author": "Rob Wu (https://robwu.nl/) <gwnRob@gmail.com>",
     "dependencies": ["toolbarwidget"],
-    "version": "0.1.5",
+    "version": "0.2.0",
     "license": "MIT"
 }

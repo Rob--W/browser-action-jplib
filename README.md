@@ -59,6 +59,20 @@ After installing the module, declare the dependency in [package.json](https://ad
 ## Dependencies
 The only external dependency is the [`toolbarwidget` Jetpack module](https://github.com/Rob--W/toolbarwidget-jplib).
 
+
+## Change log
+### 0.2.0
+- New: The `browserAction.onClicked` event receives an argument that closely follows the
+  format of Chrome's `tab.Tab`.
+- New: Automatically resize the popup panel when its content changes dynamically.
+- New: Unload the popup document when the panel is closed (consistent with Chrome).
+  Previously, the popup was never unloaded after being shown once. If you relied on
+  this incorrect behavior, either update your code, or stick to the previous version.
+
+### 0.1.4
+- Fix: Serialize all resources and included it in the main script (fixes issue [#1](https://github.com/Rob--W/browser-action-jplib/issues/1)).
+
+
 ## Credits
 Created by Rob Wu <gwnRob@gmail.com>.
 
