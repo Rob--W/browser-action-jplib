@@ -16,6 +16,10 @@ var encodedFiles = {};
 // Assume that there are no subdirectories in the data dir
 fs.readdirSync(dataDir)
 .forEach(function(filename) {
+    if (filename.charAt(0) === '.') {
+        // Skip hidden / temporary files
+        return;
+    }
     var pathToFile = path.join(dataDir, filename);
     var stat = fs.statSync(pathToFile);
     var mimeType = mime.lookup(filename);
