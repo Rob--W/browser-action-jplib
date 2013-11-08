@@ -31,6 +31,8 @@ button::-moz-focus-inner {
 #button-img {
     width: 19px;
     height: 19px;
+    max-width: 100%;
+    max-height: 100%;
     position: absolute;
     margin: auto;
     top: 0;
@@ -78,6 +80,15 @@ button::-moz-focus-inner {
 }
 #badgeText:empty {
     display: none;
+}
+@media (max-height: 19px) {
+    #badgeText {
+        height: 11px;
+        padding: 0;
+        font-size: 8.2px;
+        border-left-width: 0.5px;
+        border-right-width: 0.5px;
+    }
 }
 </style>
 </head>
