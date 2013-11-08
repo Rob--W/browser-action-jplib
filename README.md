@@ -61,6 +61,10 @@ The only external dependency is the [`toolbarwidget` Jetpack module](https://git
 
 
 ## Change log
+### 0.2.2
+- New: Automatically shrink button size when the user has set the icon size preference to "small icons".
+  To get this feature, update the [`toolbarwidget`](https://github.com/Rob--W/toolbarwidget-jplib) dependency to v1.3 or higher.
+
 ### 0.2.0
 - New: The `browserAction.onClicked` event receives an argument that closely follows the
   format of Chrome's `tab.Tab`.
