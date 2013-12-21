@@ -214,6 +214,8 @@ Creates a new badge. The badge is immediately added to the toolbar.
   Fired when a browser action icon is clicked. This event will not fire if the browser action has a popup.
 @argument {tabs.Tab}
   Object with details about the tab associated with the click. The object follows Chrome's [`tabs.Tab`](https://developer.chrome.com/extensions/tabs.html#type-Tab) format.
+  Only the "id", "index", "highlighted", "active", "pinned", "url", "title" and "incognito" properties have been implemented.
+  If you wish to get the "faviconUrl" for a given tab, use the [`sdk/places/favicon`](https://addons.mozilla.org/en-US/developers/docs/sdk/latest/modules/sdk/places/favicon.html) SDK module.
 </api>
 
 </api>
