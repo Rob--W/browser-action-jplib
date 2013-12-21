@@ -61,6 +61,10 @@ The only external dependency is the [`toolbarwidget` Jetpack module](https://git
 
 
 ## Change log
+### 0.2.4
+- Remove `faviconUrl` property because Firefox has deprecated synchronous access to this information ([#7](https://github.com/Rob--W/browser-action-jplib/issues/7)).
+- Show icon in customization mode ([#4](https://github.com/Rob--W/browser-action-jplib/issues/4)).
+
 ### 0.2.2
 - New: Automatically shrink button size when the user has set the icon size preference to "small icons".
   To get this feature, update the [`toolbarwidget`](https://github.com/Rob--W/toolbarwidget-jplib) dependency to v1.3 or higher.
