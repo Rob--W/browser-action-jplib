@@ -1,3 +1,11 @@
+# OBSOLETE
+**This module is no longer maintained, and non-functional as of Firefox 38**.
+Use the [sdk/ui module](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/ui) instead.
+
+If you are interested in using Chrome extension APIs in Firefox, follow the following bug and
+its linked bugs: https://bugzilla.mozilla.org/show_bug.cgi?id=1161828
+
+
 # chrome.browserAction API for Firefox Add-ons
 This Jetpack module provides an API which is almost identical to Google Chrome's [`chrome.browserAction`](https://developer.chrome.com/extensions/browserAction.html) API for creating badges on the toolbar.  
 Identical in terms of API, identical in terms of appearance!
